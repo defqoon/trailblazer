@@ -87,6 +87,10 @@ npm run deploy                                     # migrations + wrangler deplo
 # then set attach_custom_domain = true in terraform.tfvars and `terraform apply` again
 ```
 
+Continuous deployment: in the GitHub repo settings, add the secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`,
+commit the synced `wrangler.toml`, then set the repository **variable** `DEPLOY_ENABLED=true`. From then on, every push to
+`main` that passes the checks applies migrations and deploys. Until that variable is set, CI only runs the checks.
+
 The Worker also verifies the `Cf-Access-Jwt-Assertion` JWT (signature, issuer, audience) on every `/api` request. `workers.dev`
 and preview URLs are disabled, so the only way in is through Access. `DEV_BYPASS_AUTH` must only ever be set in `.dev.vars`.
 
