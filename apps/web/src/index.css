@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pine: #1f3a2e;
+  --color-moss: #4f7a5a;
+  --color-sand: #f6f4ef;
+  --color-rock: #6b6b63;
+  --color-ember: #d9623b;
+}
+
+:root {
+  color-scheme: light dark;
+  /* Keep focused / scrolled-to elements clear of the sticky action button + bottom nav. */
+  scroll-padding-bottom: 10rem;
+}
+
+body {
+  @apply bg-sand text-neutral-900 antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-neutral-950 text-neutral-100;
+  }
+}
+
+/* Chart roles: categorical slots 1–4 from the validated reference palette (phase order: base, build, specific, taper). */
+.viz-root {
+  --viz-surface: #ffffff;
+  --viz-grid: rgb(0 0 0 / 0.08);
+  --viz-text: #52514e;
+  --phase-base: #2a78d6;
+  --phase-build: #eb6834;
+  --phase-specific: #1baf7a;
+  --phase-taper: #eda100;
+}
+@media (prefers-color-scheme: dark) {
+  .viz-root {
+    --viz-surface: #171717;
+    --viz-grid: rgb(255 255 255 / 0.1);
+    --viz-text: #c3c2b7;
+    --phase-base: #3987e5;
+    --phase-build: #d95926;
+    --phase-specific: #199e70;
+    --phase-taper: #c98500;
+  }
+}

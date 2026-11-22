@@ -1,0 +1,6 @@
+# cp terraform.tfvars.example terraform.tfvars  (terraform.tfvars is gitignored)
+account_id           = "your-cloudflare-account-id"
+zone_name            = "example.com"
+hostname             = "trail.example.com"
+allowed_emails       = ["you@example.com"]
+attach_custom_domain = false # set true after the first `wrangler deploy`

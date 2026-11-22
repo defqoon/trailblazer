@@ -1,0 +1,45 @@
+name = "trailblazer"
+main = "apps/worker/src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Only reachable through the custom domain protected by Cloudflare Access.
+# The custom domain itself is managed by Terraform (infra/terraform).
+workers_dev = false
+preview_urls = false
+
+[assets]
+directory = "apps/web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "trailblazer"
+database_id = "00000000-0000-0000-0000-000000000000" # set by `npm run infra:sync`
+migrations_dir = "apps/worker/migrations"
+
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "trailblazer-uploads"
+
+[[queues.producers]]
+binding = "JOBS"
+queue = "trailblazer-jobs"
+
+[[queues.consumers]]
+queue = "trailblazer-jobs"
+max_batch_size = 5
+max_retries = 3
+dead_letter_queue = "trailblazer-jobs-dlq"
+
+[triggers]
+# hourly: Garmin pull · every 6h: Renpho pull · 03:00 UTC: plan adaptation
+crons = ["0 * * * *", "15 */6 * * *", "0 3 * * *"]
+
+[vars]
+ACCESS_TEAM_DOMAIN = "" # set by `npm run infra:sync`
+ACCESS_AUD = ""         # set by `npm run infra:sync`
+MODEL_FAST = "claude-sonnet-5-5"
+MODEL_PLAN = "claude-opus-5-5"

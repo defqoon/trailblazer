@@ -1,0 +1,7 @@
+# copy to .dev.vars for local `wrangler dev`
+DEV_BYPASS_AUTH=true
+ANTHROPIC_API_KEY=
+TOKEN_ENC_KEY= # base64 32 bytes: openssl rand -base64 32
+STRAVA_CLIENT_ID=
+STRAVA_CLIENT_SECRET=
+STRAVA_WEBHOOK_VERIFY_TOKEN=

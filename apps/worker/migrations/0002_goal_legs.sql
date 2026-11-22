@@ -1,0 +1,1 @@
+ALTER TABLE `goals` ADD `legs` text DEFAULT '[]' NOT NULL;
