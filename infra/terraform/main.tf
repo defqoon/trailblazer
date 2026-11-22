@@ -20,6 +20,9 @@ resource "cloudflare_d1_database" "main" {
   account_id = var.account_id
   name       = "trailblazer"
 
+  # Set explicitly: leaving it unset makes the provider plan a no-op update on every run.
+  read_replication = { mode = "disabled" }
+
   lifecycle {
     prevent_destroy = true
   }
@@ -64,6 +67,20 @@ resource "cloudflare_workers_custom_domain" "app" {
 # ---------------------------------------------------------------------------
 # Cloudflare Access: only the listed emails can reach the app
 # ---------------------------------------------------------------------------
+
+# Login methods. Google is the main one; Cloudflare's one-time PIN (emailed code), which every
+# Zero Trust org has by default, stays available as a fallback.
+resource "cloudflare_zero_trust_access_identity_provider" "google" {
+  count = var.google_client_id != "" ? 1 : 0
+
+  account_id = var.account_id
+  name       = "Google"
+  type       = "google"
+  config = {
+    client_id     = var.google_client_id
+    client_secret = var.google_client_secret
+  }
+}
 
 resource "cloudflare_zero_trust_access_policy" "owner" {
   account_id       = var.account_id
