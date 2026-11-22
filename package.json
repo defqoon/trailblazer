@@ -10,18 +10,18 @@
     "dev": "npm run build -w apps/web && wrangler dev",
     "dev:web": "npm run dev -w apps/web",
     "build": "npm run build -w apps/web",
-    "deploy": "npm run build && wrangler d1 migrations apply trailblazer --remote && wrangler deploy",
+    "deploy": "npm run build && scripts/with-secrets.sh sh -c 'wrangler d1 migrations apply trailblazer --remote && wrangler deploy'",
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply trailblazer --local",
     "typecheck": "tsc -p apps/worker && tsc -p apps/web && tsc -p packages/shared",
     "test": "vitest run",
     "infra:sync": "node scripts/sync-wrangler-from-terraform.mjs",
-    "infra:plan": "terraform -chdir=infra/terraform plan",
-    "infra:apply": "terraform -chdir=infra/terraform apply",
+    "infra:plan": "scripts/with-secrets.sh terraform -chdir=infra/terraform plan",
+    "infra:apply": "scripts/with-secrets.sh terraform -chdir=infra/terraform apply",
     "db:check": "drizzle-kit check",
-    "db:migrate:remote": "wrangler d1 migrations apply trailblazer --remote",
+    "db:migrate:remote": "scripts/with-secrets.sh wrangler d1 migrations apply trailblazer --remote",
     "db:status": "wrangler d1 migrations list trailblazer --local",
-    "db:status:remote": "wrangler d1 migrations list trailblazer --remote"
+    "db:status:remote": "scripts/with-secrets.sh wrangler d1 migrations list trailblazer --remote"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261119.1",

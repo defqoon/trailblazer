@@ -72,17 +72,42 @@ Rules:
 State is local for now (`infra/terraform/terraform.tfstate`, gitignored). Move it to a remote backend later.
 Wrangler deploys the Worker code, its bindings, cron triggers and queue consumer from `wrangler.toml`.
 
-API token permissions:
-- Account: D1 Edit, Workers R2 Storage Edit, Queues Edit, Workers Scripts Edit, Access: Apps and Policies Edit, Zero Trust Read
-- Zone: Workers Routes Edit, Zone Read, DNS Edit
+### One-time manual setup (Cloudflare and Google dashboards)
+
+1. Register a domain (Cloudflare dashboard › Domain Registration). The zone is created automatically.
+   Also open *Workers & Pages* once: that creates the account's `workers.dev` subdomain, which Cloudflare requires
+   before it attaches cron triggers and queue consumers. This Worker itself stays off `workers.dev` (`workers_dev = false`).
+2. Enable Zero Trust (dashboard › Zero Trust), pick a team name, and choose the Free plan.
+3. Optional: for Google sign-in, create a Google OAuth client (Google Cloud Console › Credentials › OAuth client ID, type *Web application*):
+   - origin `https://<team>.cloudflareaccess.com`
+   - redirect URI `https://<team>.cloudflareaccess.com/cdn-cgi/access/callback`
+   - leave the consent screen in *Testing* mode, with your address as a test user
+4. Create a Cloudflare API token (Custom token):
+   - Account: Workers Scripts Edit, D1 Edit, Workers R2 Storage Edit, Queues Edit, Access: Apps and Policies Edit,
+     Access: Organizations, Identity Providers, and Groups Edit, Account Settings Read
+   - User: User Details Read, Memberships Read
+   - Zone (your domain only): Zone Read, DNS Edit, Workers Routes Edit
+5. Put the secrets in `~/.config/trailblazer/secrets.env` (chmod 600, never committed):
+   ```
+   CLOUDFLARE_API_TOKEN=...
+   CLOUDFLARE_ACCOUNT_ID=...
+   TF_VAR_google_client_id=...        # optional (Google sign-in)
+   TF_VAR_google_client_secret=...    # optional
+   STRAVA_CLIENT_ID=...
+   STRAVA_CLIENT_SECRET=...
+   ```
+   `scripts/with-secrets.sh <cmd>` runs a command with these loaded. The `infra:*`, `deploy` and `db:*:remote` npm scripts use it.
+
+Login: the Access app accepts the Zero Trust account's existing login methods (e.g. Cloudflare's emailed one-time PIN).
+Only `allowed_emails` get in. Google sign-in is optional: set `TF_VAR_google_client_id` / `TF_VAR_google_client_secret`
+and Terraform adds it as another login method.
 
 ```sh
 cd infra/terraform
 cp terraform.tfvars.example terraform.tfvars      # account_id, zone_name, hostname, allowed_emails
-export CLOUDFLARE_API_TOKEN=...
-terraform init && terraform apply
-cd ../.. && npm run infra:sync                     # writes D1 id + Access AUD/team domain into wrangler.toml
-npx wrangler secret put TOKEN_ENC_KEY              # + the other secrets above
+terraform init
+cd ../.. && npm run infra:apply && npm run infra:sync                     # writes D1 id + Access AUD/team domain into wrangler.toml
+scripts/with-secrets.sh npx wrangler secret put TOKEN_ENC_KEY   # + the Strava secrets
 npm run deploy                                     # migrations + wrangler deploy
 # then set attach_custom_domain = true in terraform.tfvars and `terraform apply` again
 ```

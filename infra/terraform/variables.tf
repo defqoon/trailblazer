@@ -41,3 +41,16 @@ variable "session_duration" {
   type        = string
   default     = "720h"
 }
+
+variable "google_client_id" {
+  description = "Google OAuth client ID for Access login (set via TF_VAR_google_client_id). Empty = no Google login."
+  type        = string
+  default     = ""
+}
+
+variable "google_client_secret" {
+  description = "Google OAuth client secret (set via TF_VAR_google_client_secret)."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
