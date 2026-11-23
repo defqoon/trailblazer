@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Trailblazer</string>
+    <string name="title_activity_main">Trailblazer</string>
+    <string name="package_name">dev.gymandtonic.trailblazer</string>
+    <string name="custom_url_scheme">dev.gymandtonic.trailblazer</string>
+</resources>

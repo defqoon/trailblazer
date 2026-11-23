@@ -22,6 +22,13 @@
       "when": 1795170984650,
       "tag": "0002_goal_legs",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1795458291755,
+      "tag": "0003_updated_at_columns",
+      "breakpoints": true
     }
   ]
 }
