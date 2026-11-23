@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { connectStrava, useDisconnectStrava, useStravaStatus } from "../lib/strava";
+import { HealthConnectCard } from "./HealthConnectCard";
 import { Badge, Button } from "./ui";
 
 function Row({ icon, name, children, badge }: { icon: string; name: string; badge?: React.ReactNode; children: React.ReactNode }) {
@@ -53,10 +54,11 @@ export function Connections({ returnPath }: { returnPath: string }) {
           </div>
         )}
       </Row>
+      <HealthConnectCard />
       <Row icon="⌚" name="Garmin" badge={<Badge>coming soon</Badge>}>
         <p className="text-xs text-rock">
-          Resting heart rate, HRV, sleep, steps and VO2max. Garmin has no public API for personal use, so this needs a separate login
-          setup. It's on the roadmap. Until then, enter your resting heart rate by hand.
+          A direct Garmin connection (sleep, training readiness) is on the roadmap. Meanwhile, if Garmin Connect writes to Health
+          Connect on your phone, its steps, resting heart rate and HRV arrive through the Android app.
         </p>
       </Row>
     </div>

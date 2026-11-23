@@ -21,7 +21,9 @@
     "db:check": "drizzle-kit check",
     "db:migrate:remote": "scripts/with-secrets.sh wrangler d1 migrations apply trailblazer --remote",
     "db:status": "wrangler d1 migrations list trailblazer --local",
-    "db:status:remote": "scripts/with-secrets.sh wrangler d1 migrations list trailblazer --remote"
+    "db:status:remote": "scripts/with-secrets.sh wrangler d1 migrations list trailblazer --remote",
+    "android:build": "scripts/android.sh build",
+    "android:install": "scripts/android.sh install"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261119.1",

@@ -31,7 +31,9 @@ export const goals = sqliteTable("goals", {
 export const athleteProfile = sqliteTable("athlete_profile", {
   id: integer("id").primaryKey(),
   data: text("data", { mode: "json" }).notNull(),
-  updatedAt: createdAt(),
+  createdAt: createdAt(),
+  /** Set by the app on every write (nullable: SQLite can't ADD COLUMN with a computed default). */
+  updatedAt: text("updated_at"),
 });
 
 export const plans = sqliteTable("plans", {
@@ -136,7 +138,9 @@ export const dailyMetrics = sqliteTable("daily_metrics", {
   vo2maxBike: real("vo2max_bike"),
   readiness: real("readiness"),
   activeKcal: real("active_kcal"),
-  updatedAt: createdAt(),
+  createdAt: createdAt(),
+  /** Set by the app on every write (nullable: SQLite can't ADD COLUMN with a computed default). */
+  updatedAt: text("updated_at"),
 });
 
 export const bodyMeasurements = sqliteTable(
@@ -224,5 +228,7 @@ export const integrationTokens = sqliteTable("integration_tokens", {
   status: text("status").notNull().default("ok"), // ok | error
   lastError: text("last_error"),
   lastSyncAt: text("last_sync_at"),
-  updatedAt: createdAt(),
+  createdAt: createdAt(),
+  /** Set by the app on every write (nullable: SQLite can't ADD COLUMN with a computed default). */
+  updatedAt: text("updated_at"),
 });

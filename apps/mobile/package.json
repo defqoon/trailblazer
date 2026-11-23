@@ -1,0 +1,19 @@
+{
+  "name": "@trailblazer/mobile",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "cap sync android",
+    "build:apk": "cap sync android && cd android && ./gradlew assembleDebug",
+    "install:apk": "adb install -r android/app/build/outputs/apk/debug/app-debug.apk"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capgo/capacitor-health": "^8.13.0"
+  }
+}

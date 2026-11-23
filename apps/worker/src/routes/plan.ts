@@ -136,7 +136,7 @@ planRoutes.post("/plan", async (c) => {
     db.update(goals).set({ active: false }).where(eq(goals.active, true)),
     db
       .insert(athleteProfile)
-      .values({ id: 1, data: profile })
+      .values({ id: 1, data: profile, updatedAt: new Date().toISOString() })
       .onConflictDoUpdate({ target: athleteProfile.id, set: { data: profile, updatedAt: new Date().toISOString() } }),
   ]);
   const goalRow = await db

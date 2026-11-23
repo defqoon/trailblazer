@@ -191,3 +191,30 @@ export const foodEstimateSchema = z.object({
   notes: z.string().default(""),
 });
 export type FoodEstimate = z.infer<typeof foodEstimateSchema>;
+
+/** Phone health data (Android Health Connect) pushed by the native app. */
+export const healthSyncSchema = z.object({
+  source: z.enum(["health_connect"]),
+  days: z
+    .array(
+      z.object({
+        date: isoDate,
+        steps: z.number().int().min(0).max(200_000).nullable(),
+        restingHr: z.number().min(20).max(150).nullable(),
+        hrv: z.number().min(1).max(300).nullable(),
+        vo2max: z.number().min(10).max(100).nullable(),
+      }),
+    )
+    .max(400),
+  body: z
+    .array(
+      z.object({
+        externalId: z.string().min(1).max(200),
+        measuredAt: z.iso.datetime({ offset: true }),
+        weightKg: z.number().min(20).max(300),
+        fatPct: z.number().min(2).max(70).nullable(),
+      }),
+    )
+    .max(2000),
+});
+export type HealthSync = z.infer<typeof healthSyncSchema>;
