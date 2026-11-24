@@ -1,4 +1,15 @@
-import type { AthleteProfile, Goal, Phase, WorkoutStep, WorkoutType } from "./schemas";
+import type {
+  AthleteProfile,
+  FoodEstimate,
+  FoodItem,
+  Goal,
+  MealType,
+  NutritionSettings,
+  Phase,
+  WorkoutStep,
+  WorkoutType,
+} from "./schemas";
+import type { DailyTargets, DayTotals, NutritionRecommendation, WeightTrendSummary } from "./nutrition";
 import type { PlanSummary } from "./plan/periodization";
 import type { Sport } from "./sports";
 
@@ -40,4 +51,53 @@ export interface CurrentPlanDto {
   weeks: WeekDto[];
   /** Last saved profile, used to prefill the wizard. */
   profile: AthleteProfile | null;
+}
+
+export interface FoodEntryDto {
+  id: number;
+  eatenAt: string;
+  meal: MealType | null;
+  description: string;
+  photoKey: string | null;
+  items: FoodItem[];
+  kcal: number;
+  kcalMin: number | null;
+  kcalMax: number | null;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  confidence: "low" | "medium" | "high" | null;
+  userCorrected: boolean;
+  createdAt: string;
+}
+
+export interface FoodEstimateResponseDto {
+  photoKey: string | null;
+  provider: "gemini";
+  model: string;
+  estimate: FoodEstimate;
+}
+
+export interface NutritionDayWorkoutDto {
+  id: number;
+  source: string;
+  name: string;
+  sport: string;
+  movingTimeS: number;
+  kcal: number;
+  estimated: boolean;
+}
+
+export interface NutritionDayDto {
+  date: string;
+  settings: NutritionSettings;
+  targets: DailyTargets;
+  totals: DayTotals;
+  remainingKcal: number;
+  alertTriggered: boolean;
+  workouts: NutritionDayWorkoutDto[];
+  plannedToday: Array<{ id: number; title: string; sport: string; durationMin: number; status: WorkoutStatus }>;
+  entries: FoodEntryDto[];
+  recommendations: NutritionRecommendation[];
+  weightTrend: WeightTrendSummary;
 }

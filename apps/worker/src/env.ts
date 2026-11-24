@@ -8,8 +8,10 @@ export interface Env {
   ACCESS_AUD: string;
   MODEL_FAST: string;
   MODEL_PLAN: string;
+  GEMINI_MODEL?: string;
 
   // secrets
+  GEMINI_API_KEY?: string;
   ANTHROPIC_API_KEY?: string;
   TOKEN_ENC_KEY: string;
   STRAVA_CLIENT_ID?: string;
