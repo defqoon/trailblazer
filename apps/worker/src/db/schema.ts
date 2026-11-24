@@ -190,6 +190,8 @@ export const foodEntries = sqliteTable(
     photoKey: text("photo_key"),
     items: text("items", { mode: "json" }),
     kcal: real("kcal").notNull(),
+    kcalMin: real("kcal_min"),
+    kcalMax: real("kcal_max"),
     proteinG: real("protein_g").notNull(),
     carbsG: real("carbs_g").notNull(),
     fatG: real("fat_g").notNull(),
@@ -199,6 +201,15 @@ export const foodEntries = sqliteTable(
   },
   (t) => [index("food_eaten").on(t.eatenAt)],
 );
+
+/** Single row (id = 1); stored as validated JSON (`nutritionSettingsSchema`). */
+export const nutritionSettings = sqliteTable("nutrition_settings", {
+  id: integer("id").primaryKey(),
+  data: text("data", { mode: "json" }).notNull(),
+  createdAt: createdAt(),
+  /** Set by the app on every write (nullable: SQLite can't ADD COLUMN with a computed default). */
+  updatedAt: text("updated_at"),
+});
 
 export const chatThreads = sqliteTable("chat_threads", {
   id: id(),

@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import type { AppEnv, Env, Job } from "./env";
 import { requireAccess } from "./lib/access";
+import { foodRoutes } from "./routes/food";
 import { healthRoutes } from "./routes/health";
+import { nutritionRoutes } from "./routes/nutrition";
 import { planRoutes } from "./routes/plan";
 import { stravaRoutes } from "./routes/strava";
 
@@ -21,6 +23,8 @@ app.get("/health", async (c) => {
 app.route("/", planRoutes);
 app.route("/", stravaRoutes);
 app.route("/", healthRoutes);
+app.route("/", foodRoutes);
+app.route("/", nutritionRoutes);
 
 app.notFound((c) => c.json({ error: "not found" }, 404));
 app.onError((err, c) => {

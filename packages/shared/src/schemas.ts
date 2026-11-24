@@ -176,21 +176,131 @@ export interface PlannedWorkoutDraft {
 
 export const workoutStatusSchema = z.enum(["planned", "done", "partial", "skipped"]);
 
+export const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack", "during_activity"] as const;
+export const mealTypeSchema = z.enum(MEAL_TYPES);
+export type MealType = z.infer<typeof mealTypeSchema>;
+
+export const foodItemSchema = z.object({
+  name: z.string().min(1),
+  grams: z.number().nonnegative(),
+  kcal: z.number().nonnegative(),
+  kcalMin: z.number().nonnegative().optional(),
+  kcalMax: z.number().nonnegative().optional(),
+  proteinG: z.number().nonnegative(),
+  carbsG: z.number().nonnegative(),
+  fatG: z.number().nonnegative(),
+});
+export type FoodItem = z.infer<typeof foodItemSchema>;
+
+export const foodFollowUpQuestionSchema = z.object({
+  id: z.string().min(1),
+  question: z.string().min(1),
+  suggestions: z.array(z.string().min(1)).max(5).default([]),
+});
+export type FoodFollowUpQuestion = z.infer<typeof foodFollowUpQuestionSchema>;
+
 export const foodEstimateSchema = z.object({
-  items: z.array(
-    z.object({
-      name: z.string(),
-      grams: z.number().nonnegative(),
-      kcal: z.number().nonnegative(),
-      proteinG: z.number().nonnegative(),
-      carbsG: z.number().nonnegative(),
-      fatG: z.number().nonnegative(),
-    }),
-  ),
+  items: z.array(foodItemSchema),
+  totalKcal: z.number().nonnegative(),
+  kcalMin: z.number().nonnegative(),
+  kcalMax: z.number().nonnegative(),
+  kcalDelta: z.number().nonnegative(),
+  proteinG: z.number().nonnegative(),
+  carbsG: z.number().nonnegative(),
+  fatG: z.number().nonnegative(),
   confidence: z.enum(["low", "medium", "high"]),
+  needsClarification: z.boolean(),
+  followUpQuestions: z.array(foodFollowUpQuestionSchema).max(4).default([]),
   notes: z.string().default(""),
 });
 export type FoodEstimate = z.infer<typeof foodEstimateSchema>;
+
+export const foodClarificationTurnSchema = z.object({
+  question: z.string().min(1).max(300),
+  answer: z.string().min(1).max(500),
+});
+export type FoodClarificationTurn = z.infer<typeof foodClarificationTurnSchema>;
+
+export const foodEstimateRequestSchema = z.object({
+  description: z.string().max(2000).default(""),
+  meal: mealTypeSchema.optional(),
+  photoKey: z.string().max(300).nullable().optional(),
+  clarifications: z.array(foodClarificationTurnSchema).max(12).default([]),
+});
+export type FoodEstimateRequest = z.infer<typeof foodEstimateRequestSchema>;
+
+export const foodEntryCreateSchema = z.object({
+  eatenAt: z.iso.datetime({ offset: true }).optional(),
+  date: isoDate.optional(),
+  meal: mealTypeSchema.nullable().optional(),
+  description: z.string().max(2000).default(""),
+  photoKey: z.string().max(300).nullable().optional(),
+  items: z.array(foodItemSchema).default([]),
+  kcal: z.number().min(0).max(15000),
+  kcalMin: z.number().min(0).max(15000).nullable().optional(),
+  kcalMax: z.number().min(0).max(15000).nullable().optional(),
+  proteinG: z.number().min(0).max(1000),
+  carbsG: z.number().min(0).max(2000),
+  fatG: z.number().min(0).max(1000),
+  confidence: z.enum(["low", "medium", "high"]).nullable().optional(),
+  userCorrected: z.boolean().default(false),
+});
+export type FoodEntryCreate = z.infer<typeof foodEntryCreateSchema>;
+
+export const foodEntryUpdateSchema = foodEntryCreateSchema.partial();
+export type FoodEntryUpdate = z.infer<typeof foodEntryUpdateSchema>;
+
+export const WEIGHT_GOALS = ["lose_slow", "lose", "maintain", "gain"] as const;
+export type WeightGoal = (typeof WEIGHT_GOALS)[number];
+
+export const TRAINING_FOCUSES = ["auto", "endurance", "strength", "hybrid"] as const;
+export type TrainingFocusSetting = (typeof TRAINING_FOCUSES)[number];
+export type ResolvedTrainingFocus = Exclude<TrainingFocusSetting, "auto">;
+
+export const ACTIVITY_LEVELS = ["sedentary", "light", "moderate"] as const;
+export type ActivityLevel = (typeof ACTIVITY_LEVELS)[number];
+
+export const nutritionSettingsSchema = z.object({
+  mode: z.enum(["auto", "manual"]).default("auto"),
+  manualKcal: z.number().min(1000).max(8000).nullable().default(null),
+  weightGoal: z.enum(WEIGHT_GOALS).default("maintain"),
+  targetWeightKg: z.number().min(30).max(250).nullable().default(null),
+  trainingFocus: z.enum(TRAINING_FOCUSES).default("auto"),
+  activityLevel: z.enum(ACTIVITY_LEVELS).default("sedentary"),
+  /** Percentage of workout burn added to today's calorie budget (default 75%). */
+  workoutEatBackPct: z.number().min(0).max(100).default(75),
+  /** Direct RMR/BMR from a DEXA scan report, if available. */
+  dexaBmrKcal: z.number().min(800).max(4500).nullable().default(null),
+  /** Lean mass (kg) from a DEXA scan (used for Katch-McArdle BMR when dexaBmrKcal is unset). */
+  dexaLeanMassKg: z.number().min(20).max(150).nullable().default(null),
+  /** Trigger follow-up questions when kcalMax - kcalMin exceeds this delta. */
+  uncertaintyThresholdKcal: z.number().int().min(50).max(1000).default(200),
+  calorieAlertEnabled: z.boolean().default(true),
+  calorieAlertPct: z.number().int().min(50).max(100).default(85),
+  weighInReminderEnabled: z.boolean().default(true),
+  /** 0 = Monday … 6 = Sunday */
+  weighInReminderDay: weekday.default(6),
+  weighInReminderTime: z
+    .string()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "HH:MM")
+    .default("08:30"),
+});
+export type NutritionSettings = z.infer<typeof nutritionSettingsSchema>;
+
+export const DEFAULT_NUTRITION_SETTINGS: NutritionSettings = nutritionSettingsSchema.parse({});
+
+export const manualWeightSchema = z.object({
+  measuredAt: z.iso.datetime({ offset: true }).optional(),
+  weightKg: z.number().min(20).max(300),
+  fatPct: z.number().min(2).max(70).nullable().optional(),
+  bmrKcal: z.number().min(800).max(4500).nullable().optional(),
+});
+export type ManualWeight = z.infer<typeof manualWeightSchema>;
+
+export const renphoCsvImportSchema = z.object({
+  csv: z.string().min(10).max(2_000_000),
+});
+export type RenphoCsvImport = z.infer<typeof renphoCsvImportSchema>;
 
 /** Phone health data (Android Health Connect) pushed by the native app. */
 export const healthSyncSchema = z.object({
