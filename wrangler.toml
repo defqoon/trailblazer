@@ -43,3 +43,4 @@ ACCESS_TEAM_DOMAIN = "https://royal-water-7270.cloudflareaccess.com" # set by `n
 ACCESS_AUD = "1976c0bc9a3141aae25ed33d83a39d6f5cd9e1413fd184083b0e3f66828a120b"         # set by `npm run infra:sync`
 MODEL_FAST = "claude-sonnet-5-5"
 MODEL_PLAN = "claude-opus-5-5"
+GEMINI_MODEL = "gemini-2.5-flash"

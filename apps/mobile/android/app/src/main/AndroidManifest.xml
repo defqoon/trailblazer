@@ -39,6 +39,7 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- Health Connect: read older than 30 days (the plugin declares the per-type READ permissions). -->
     <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY" />
